@@ -50,4 +50,4 @@ printf "(voice_upc_ca_pau_hts)" > /opt/tts-config/cfg_ca_male.txt
 printf "(voice_upc_ca_ona_hts)" > /opt/tts-config/cfg_ca_female.txt
 printf "(voice_JuntaDeAndalucia_es_sf_diphone)" > /opt/tts-config/cfg_es_female.txt
 printf "(voice_JuntaDeAndalucia_es_pa_diphone)" > /opt/tts-config/cfg_es_male.txt
-printf "(kal_diphone)" > /opt/tts-config/cfg_en_male.txt
+printf "(voice_kal_diphone)" > /opt/tts-config/cfg_en_male.txt
