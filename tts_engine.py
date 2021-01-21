@@ -5,8 +5,17 @@ import sys
 import tempfile
 import os
 
+path = (os.getcwd() + "/configuration.json")
+with open(path) as json_file1:
+    # global configuration
+    configuration = json.load(json_file1)
 
-def speech(text):
+
+def speech_lang(text, lang, gender):
+    speech(text, configuration["voice"][lang][gender])
+
+
+def speech(text, voice):
     iconv = '/usr/bin/iconv'
     txt2wave = '/usr/bin/text2wave'
 
@@ -22,8 +31,7 @@ def speech(text):
         p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
         p.wait()
 
-        cmd = "{0} -o {1} {2} -eval /opt/tts-config/cfg_" + configuration["voice"]["lang"] \
-              + "_" + configuration["voice"]["gender"] + ".txt"
+        cmd = "{0} -o {1} {2} -eval '(voice_" + voice + ")'"
 
         cmd = cmd.format(txt2wave, wave_file.name, encoded_file.name)
 
@@ -40,17 +48,20 @@ def main(argv):
         configuration = json.load(json_file)
 
     text = ''
-    lang = configuration["voice"]["lang"]
-    gender = configuration["voice"]["gender"]
+    lang = ''
+    gender = ''
+    voice = ''
     try:
-        opts, args = getopt.getopt(argv, "vhl:g:t:", ["version", "lang=", "gender=", "text="])
+        opts, args = getopt.getopt(argv, "vhl:g:x:t:", ["version", "lang=", "gender=", "voice=", "text="])
     except getopt.GetoptError:
-        print('tts_engine.py  -l <lang> -g <gender> -t <text>')
+        print('tts_engine.py  -l <lang> -g <gender> -t <text> -x <voice>')
         sys.exit(2)
+
+
     for opt, arg in opts:
         if opt == '-h':
-            print('tts_engine.py  -l <lang> -g <gender> -t <text>')
-            print('tts_engine.py  --lang <lang> --gender <gender> --text <text>')
+            print('tts_engine.py  -l <lang> -g <gender> -t <text> -x <voice>')
+            print('tts_engine.py  --lang <lang> --gender <gender> --text <text> --voice <voice>')
             sys.exit()
         elif opt in ("-v", "--version"):
             print("  ****  festival-python: 1.0  ****")
@@ -61,15 +72,29 @@ def main(argv):
             lang = arg
         elif opt in ("-g", "--gender"):
             gender = arg
+        elif opt in ("-x", "--voice"):
+            voice = arg
         elif opt in ("-t", "--text"):
             text = arg
+
+    if (lang == '' or gender == '') and (voice != '' and text != ''):
+        speech(text, voice)
+
+    elif lang != '' and text != '' and gender != '':
+        speech_lang(text, lang, gender)
+
+    else:
+        # if (lang == '' or text == '' or gender == '') and voice == '':
+        print('## Error, missing parameters')
+        print('-l <lang> -g <gender> -t <text>  /OR/  -x <voice> -t <text>')
+        print('--lang <lang> --gender <gender> --text <text>  /OR/  --voice <voice> --text <text>')
+        sys.exit()
+
     print('Lang is ', lang)
     print('Gender is ', gender)
     print('Text is ', text)
 
-    configuration["voice"]["lang"] = lang
-    configuration["voice"]["gender"] = gender
-    speech(text)
+    # speech(text, lang, gender)
 
 if __name__ == "__main__":
     main(sys.argv[1:])

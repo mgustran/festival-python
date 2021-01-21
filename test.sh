@@ -1,4 +1,8 @@
-{
+#!/bin/bash
+
+SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+
+echo '{
   "voice": {
     "ca": {
       "male": "upc_ca_pau_hts",
@@ -13,4 +17,4 @@
       "female": "cmu_us_slt_arctic_hts"
     }
   }
-}
+}' > "$SCRIPTPATH/configuration.json"
