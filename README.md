@@ -30,6 +30,12 @@ help `-h`
 
 version `-v`  `--version` Print Festival and Python3 versions
 #
+#### Configuration
+The voices are defined in `configuration.json`,
+if you want to install more voices, 
+you need to reference new voice in its own lang-gender property.
+If you not sure about the voice name, list voices with the command  option **-s**
+#
 #### Run examples
 `python3 tts_engine.py -t 'Aixo es una prova' -l ca -g female`
 
@@ -47,11 +53,6 @@ or
 `spanish (male & female)`
 
 `english (male & female)`
-
-The voices are defined in `configuration.json`,
-if you want to install other voices, 
-you need to reference new voice in its own lang-gender property.
-If you not sure about the voice name list it with the command  option -s
 
 You can modify current voices, 
 download more for current and other languages
