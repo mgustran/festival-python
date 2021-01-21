@@ -24,6 +24,8 @@ gender `-g` `--gender`  (male or female)
 
 voice `-x` `--voice`  (select voice instead language and gender)
 
+list voices `-s` `--list-voices`  (list available voices)
+
 help `-h`
 
 version `-v`  `--version` Print Festival and Python3 versions

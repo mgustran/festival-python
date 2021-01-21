@@ -11,6 +11,14 @@ with open(path) as json_file1:
     configuration = json.load(json_file1)
 
 
+def list_voices():
+    print("Available voices installed in /usr/share/festival/voices, "
+          "this option only works if festival is installed ok\n")
+    langs = os.listdir("/usr/share/festival/voices")
+    for n in range(0, len(langs)):
+        print(langs[n] + ": " + str(os.listdir("/usr/share/festival/voices/" + langs[n])))
+
+
 def speech_lang(text, lang, gender):
     speech(text, configuration["voice"][lang][gender])
 
@@ -52,16 +60,23 @@ def main(argv):
     gender = ''
     voice = ''
     try:
-        opts, args = getopt.getopt(argv, "vhl:g:x:t:", ["version", "lang=", "gender=", "voice=", "text="])
+        opts, args = getopt.getopt(argv, "svhl:g:x:t:", ["help", "list-voices", "version", "lang=", "gender=", "voice=", "text="])
     except getopt.GetoptError:
-        print('tts_engine.py  -l <lang> -g <gender> -t <text> -x <voice>')
+        print('-l <lang> -g <gender> -t <text>  /OR/  -x <voice> -t <text>')
+        print('--lang <lang> --gender <gender> --text <text>  /OR/  --voice <voice> --text <text>')
         sys.exit(2)
 
 
     for opt, arg in opts:
-        if opt == '-h':
-            print('tts_engine.py  -l <lang> -g <gender> -t <text> -x <voice>')
-            print('tts_engine.py  --lang <lang> --gender <gender> --text <text> --voice <voice>')
+        if opt in ('-h', '--help'):
+            print("   ####   USAGE   ####")
+            print('-l <lang> -g <gender> -t <text>  /OR/  -x <voice> -t <text>')
+            print('--lang <lang> --gender <gender> --text <text>  /OR/  --voice <voice> --text <text>')
+            print('--lang <lang> --gender <gender> --text <text>  /OR/  --voice <voice> --text <text>\n')
+            print("   ####   UTILS   ####")
+            print("list voices : -s or --list-voices")
+            print("version     : -v or --version")
+
             sys.exit()
         elif opt in ("-v", "--version"):
             print("  ****  festival-python: 1.0  ****")
@@ -76,6 +91,9 @@ def main(argv):
             voice = arg
         elif opt in ("-t", "--text"):
             text = arg
+        elif opt in ("-s", "--list-voices"):
+            list_voices()
+            sys.exit()
 
     if (lang == '' or gender == '') and (voice != '' and text != ''):
         speech(text, voice)
