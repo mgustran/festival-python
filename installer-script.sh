@@ -5,8 +5,6 @@
 SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 
 echo "source code path : $SCRIPTPATH"
-exit 0
-
 mkdir "$SCRIPTPATH/z_packages"
 
 # Install python3,  Festival TTS engine  and  Festival Catalan voice
