@@ -11,7 +11,7 @@ A ) `bash install.sh`
 
 Other way if fails
 
-B ) `sudo bash installer-script.sh` 
+B ) `sudo bash installer-script-sudo.sh` 
 
 
 #
@@ -47,6 +47,11 @@ or
 `spanish (male & female)`
 
 `english (male & female)`
+
+The voices are defined in `configuration.json`,
+if you want to install other voices, 
+you need to reference new voice in its own lang-gender property.
+If you not sure about the voice name list it with the command  option -s
 
 You can modify current voices, 
 download more for current and other languages

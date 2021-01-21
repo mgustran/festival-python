@@ -2,16 +2,21 @@
 # Tested on Debian 10 (Bunsenlabs Lithium), python3.7.6 and festival2.5.0
 # Tested on Ubuntu 20.04, python3.8 and festival 2.5.0
 
-# Useful Festival wiki (from arch but its the same) -> https://wiki.archlinux.org/index.php/Festival
-
 SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 
 echo "source code path : $SCRIPTPATH"
 
-#mkdir "$SCRIPTPATH/z_packages"
+mkdir "$SCRIPTPATH/z_packages"
 
 # Install python3,  Festival TTS engine  and  Festival Catalan voice
 apt-get -y install python3 festival festvox-ca-ona-hts festvox-us-slt-hts
+
+# Useful Festival wiki (from arch but its the same) -> https://wiki.archlinux.org/index.php/Festival
+
+# Download 3 more voices :    2 spanish from guadalinex repo     &  1 catalan voice from festcat repo
+wget -O "$SCRIPTPATH/z_packages/festvox-ca-pau-hts_1.3-1_all.deb" 'http://festcat.talp.cat/download/festvox-ca-pau-hts_1.3-1_all.deb'
+wget -O "$SCRIPTPATH/z_packages/festvox-sflpc16k_1.0-1_all.deb" 'https://github.com/guadalinex-archive/hispavoces/raw/master/packages/festvox-sflpc16k_1.0-1_all.deb'
+wget -O "$SCRIPTPATH/z_packages/festvox-palpc16k_1.0-1_all.deb" 'https://github.com/guadalinex-archive/hispavoces/raw/master/packages/festvox-palpc16k_1.0-1_all.deb'
 
 # Install manually 3 more voices
 apt install -y "$SCRIPTPATH/z_packages/festvox-palpc16k_1.0-1_all.deb"
