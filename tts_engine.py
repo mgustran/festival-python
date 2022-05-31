@@ -4,6 +4,7 @@ import subprocess
 import sys
 import tempfile
 import os
+from datetime import datetime
 
 path = (os.getcwd() + "/configuration.json")
 with open(path) as json_file1:
@@ -21,6 +22,9 @@ def list_voices():
 
 def speech_lang(text, lang, gender):
     speech(text, configuration["voice"][lang][gender])
+
+def export_lang(text, lang, gender):
+    export(text, configuration["voice"][lang][gender])
 
 
 def speech(text, voice):
@@ -50,6 +54,35 @@ def speech(text, voice):
         return
 
 
+def export(text, voice):
+    iconv = '/usr/bin/iconv'
+    txt2wave = '/usr/bin/text2wave'
+
+    now = datetime.now()
+    date_time = now.strftime("%m-%d-%Y_%H-%M-%S")
+
+    with tempfile.NamedTemporaryFile() as text_file, \
+            tempfile.NamedTemporaryFile() as encoded_file, \
+            open('/tmp/' + date_time + '.wav', 'w') as wave_file:
+        f = open(text_file.name, 'w', encoding='utf8')
+        f.write(text)
+        f.close()
+
+        cmd = '{0} -f utf8 -t ISO-8859-15//TRANSLIT {1} > {2}'. \
+            format(iconv, text_file.name, encoded_file.name)
+        p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+        p.wait()
+
+        cmd = "{0} -o {1} {2} -eval '(voice_" + voice + ")'"
+
+        cmd = cmd.format(txt2wave, wave_file.name, encoded_file.name)
+
+        p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+        p.wait()
+        print(wave_file.name)
+        return
+
+
 def main(argv):
     with open('configuration.json') as json_file:
         global configuration
@@ -59,8 +92,9 @@ def main(argv):
     lang = ''
     gender = ''
     voice = ''
+    is_export = False
     try:
-        opts, args = getopt.getopt(argv, "svhl:g:x:t:", ["help", "list-voices", "version", "lang=", "gender=", "voice=", "text="])
+        opts, args = getopt.getopt(argv, "svhl:g:x:t:e:", ["help", "list-voices", "version", "lang=", "gender=", "voice=", "text=", "export="])
     except getopt.GetoptError:
         print('-l <lang> -g <gender> -t <text>  /OR/  -x <voice> -t <text>')
         print('--lang <lang> --gender <gender> --text <text>  /OR/  --voice <voice> --text <text>')
@@ -91,22 +125,42 @@ def main(argv):
             voice = arg
         elif opt in ("-t", "--text"):
             text = arg
+        elif opt in ("-e", "--export"):
+            is_export = True
         elif opt in ("-s", "--list-voices"):
             list_voices()
             sys.exit()
 
-    if (lang == '' or gender == '') and (voice != '' and text != ''):
-        speech(text, voice)
 
-    elif lang != '' and text != '' and gender != '':
-        speech_lang(text, lang, gender)
+    if is_export:
+
+        if (lang == '' or gender == '') and (voice != '' and text != ''):
+            export(text, voice)
+
+        elif lang != '' and text != '' and gender != '':
+            export_lang(text, lang, gender)
+
+        else:
+            # if (lang == '' or text == '' or gender == '') and voice == '':
+            print('## Error, missing parameters')
+            print('-l <lang> -g <gender> -t <text>  /OR/  -x <voice> -t <text>')
+            print('--lang <lang> --gender <gender> --text <text>  /OR/  --voice <voice> --text <text>')
+            sys.exit()
 
     else:
-        # if (lang == '' or text == '' or gender == '') and voice == '':
-        print('## Error, missing parameters')
-        print('-l <lang> -g <gender> -t <text>  /OR/  -x <voice> -t <text>')
-        print('--lang <lang> --gender <gender> --text <text>  /OR/  --voice <voice> --text <text>')
-        sys.exit()
+
+        if (lang == '' or gender == '') and (voice != '' and text != ''):
+            speech(text, voice)
+
+        elif lang != '' and text != '' and gender != '':
+            speech_lang(text, lang, gender)
+
+        else:
+            # if (lang == '' or text == '' or gender == '') and voice == '':
+            print('## Error, missing parameters')
+            print('-l <lang> -g <gender> -t <text>  /OR/  -x <voice> -t <text>')
+            print('--lang <lang> --gender <gender> --text <text>  /OR/  --voice <voice> --text <text>')
+            sys.exit()
 
     print('Lang is ', lang)
     print('Gender is ', gender)
